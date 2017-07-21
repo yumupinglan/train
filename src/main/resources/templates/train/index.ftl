@@ -131,6 +131,8 @@ input.error {
 	<input type="hidden" id="to_station_name" />
 	<input type="hidden" id="location_code" />
 	<input type="hidden" id="station_train_code" />
+	<input type="hidden" id="expectSeatType" />
+	<input type="hidden" id="userName" />
 	<div style="top: 0; left: 0; z-index: 1000; POSITION: absolute;">
 		<div style="overflow: hidden; left: 323px; top: 90.5px; display: none;" id="form_cities">
 			<div id="top_cities">简码/汉字或↑↓</div>

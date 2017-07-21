@@ -6,16 +6,21 @@ $(function(){
 		var passengerTicketStr="";
 		var oldPassengerStr="";
 		var html="";
+		var expectedSeatTypes = "";
 		var seatType=$("input[name='seatType']:checkbox:checked").val();
 		$("input[name='passenger']:checkbox:checked").each(function(){
 			passengerTicketStr+=seatType+",0,"+$(this).val()+","+$(this).attr("mobile_no")+",N_";
 			oldPassengerStr+=$(this).val().substring(2)+",1_";
 			var type=$("input[name='seatType']:checkbox:checked").attr("types")
-			html+="<label for='avail_ticket' style='cursor: pointer;'>乘客名："+$(this).attr("passenger_name")+"   座位类型："+type+"</label>  ";
+			html+="<label for='avail_ticket' style='cursor: pointer;'>乘客名："+$(this).attr("passenger_name")+"   座位类型："+seatType+"</label>  ";
+		});
+		$("input[name='seatType']:checkbox:checked").each(function(){
+			expectedSeatTypes+=$(this).val()+",#,";
 		});
 		passengerTicketStr=passengerTicketStr.substring(0,passengerTicketStr.length-1);
 		$("#passengerTicketStr").val(passengerTicketStr);
 		$("#oldPassengerStr").val(oldPassengerStr);
+		$("#expectSeatType").val(seatType);
 		$('#myModal').modal('hide');
 		$(".fr").html(html);
 	})

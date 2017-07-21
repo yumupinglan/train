@@ -27,7 +27,7 @@ function checkCode(){
 	code=code.substring(0,code.length-1);
 	var repeat_submit_token=$("#globalRepeatSubmitToken").val();
 	var train_no=$("#train_no").val();
-	var seatType=$("input[name='seatType']:checkbox:checked").val();
+	var seatType=$("#expectSeatType").val();
 	var fromStationTelecode=$("#from_station_telecode").val();
 	var toStationTelecode=$("#to_station_telecode").val();
 	var stationTrainCode=$("#station_train_code").val();
@@ -89,6 +89,53 @@ function checkCode(){
 		}
 	});
 }
+
+function checkOrderInfo(){
+	var repeat_submit_token=$("#globalRepeatSubmitToken").val();
+	var train_no=$("#train_no").val();
+	var seatType=$("#expectSeatType").val();
+	var fromStationTelecode=$("#from_station_telecode").val();
+	var toStationTelecode=$("#to_station_telecode").val();
+	var stationTrainCode=$("#station_train_code").val();
+	var leftTicket=$("#leftTicketStr").val();
+	var key_check_isChange=$("#key_check_isChange").val();
+	var train_location=$("#location_code").val();
+	var passengerTicketStr=$("#passengerTicketStr").val();
+	var oldPassengerStr=$("#oldPassengerStr").val();
+	var data = {
+			randCode : "",
+			repeat_submit_token : repeat_submit_token,
+			train_date : new Date($("#startDate").val() + " 00:00:00"),
+			train_no : train_no,
+			stationTrainCode : stationTrainCode,
+			seatType : seatType,
+			fromStationTelecode : fromStationTelecode,
+			toStationTelecode : toStationTelecode,
+			leftTicket : leftTicket,
+			oldPassengerStr : oldPassengerStr,
+			passengerTicketStr : passengerTicketStr,
+			key_check_isChange : key_check_isChange,
+			train_location : train_location
+		};
+		$.ajax({
+			type : "POST",
+			isTakeParam: false,
+			dataType:"json",
+       		data:data,
+			url : path+"/index/checkOrderInfo",
+			success : function(data) {
+				if(data.data.submitStatus){
+					data={repeat_submit_token : repeat_submit_token}
+					queryOrderWaitTime(data);
+				}else{
+					dialog.tip.remove();
+					dialog.tip.work({type:'error', content :data.data.errMsg, timer : 2000});
+				}
+					
+			}
+		});
+}
+
 function queryOrderWaitTime(datas){
 	$.ajax({
 		type : "POST",
@@ -179,9 +226,10 @@ function submitOrderRequest(secretStr,start_time,train_no,from_station_telecode,
 			$("#globalRepeatSubmitToken").val(data.globalRepeatSubmitToken);
 			$("#key_check_isChange").val(data.key_check_isChange);
 			$("#leftTicketStr").val(data.leftTicketStr);
-			$(".modal-title").html("验证码");
-			$(".modal-body").html("<iframe id=\"myiframe\"src=\""+ path+"/index/img?moduled=passenger\"width=\"500\"height=\"200\"frameborder=\"no\"border=\"0\"marginwidth=\"0\"marginheight=\"0\"scrolling=\"no\"allowtransparency=\"yes\"></iframe><input type=\"button\" id=\"checkCode\" onclick=\"checkCode()\" class=\"btn btn-default\" value=\"验证\"/>");
-			$('#myModal').modal('show');
+			checkOrderInfo();
+			//$(".modal-title").html("验证码");
+			//$(".modal-body").html("<iframe id=\"myiframe\"src=\""+ path+"/index/img?moduled=passenger\"width=\"500\"height=\"200\"frameborder=\"no\"border=\"0\"marginwidth=\"0\"marginheight=\"0\"scrolling=\"no\"allowtransparency=\"yes\"></iframe><input type=\"button\" id=\"checkCode\" onclick=\"checkCode()\" class=\"btn btn-default\" value=\"验证\"/>");
+			//$('#myModal').modal('show');
 		},
 		error : function(data) {
 			dialog.tip.remove();
@@ -201,4 +249,28 @@ function getCookie(name) {
 		return unescape(arr[2]);
 	else
 		return null;
+}
+function getAvailableTrainInfo() {
+	var userName = $("#userName").val();
+	var data = {userName:userName};
+	$.ajax({
+		type : "POST",
+		url : path+"/index/getAvailableTrainInfo",
+		dataType : "json",	
+		data : data,
+		success : function(data) {
+			if(!data){
+				getAvailableTrainInfo();
+			}				
+			submitOrderRequest(data.secretStr,data.queryLeftNewDTO.start_time ,data.queryLeftNewDTO.train_no,
+					data.queryLeftNewDTO.from_station_telecode,data.queryLeftNewDTO.to_station_telecode,
+					data.queryLeftNewDTO.yp_info,data.queryLeftNewDTO.from_station_name,
+					data.queryLeftNewDTO.to_station_name,data.queryLeftNewDTO.location_code,
+					data.queryLeftNewDTO.station_train_code);
+		},
+		error : function(data) {
+			getAvailableTrainInfo();
+		}
+	});
+	
 }

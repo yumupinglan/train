@@ -38,6 +38,7 @@
 								dialog.tip.remove();
 								if(data.data.loginCheck=='Y'){
 									$("#loginbutton").hide();
+									$("#userName").val(data.username);
 									$("#user").html("<a class=\"btn btn-link\" href=\"https://kyfw.12306.cn/otn/index/initMy12306\" target=\"_blank\">您好,"+data.username+"</a>");
 									setCookie("user_name",user_name,60);
 									setCookie("password",password,60);

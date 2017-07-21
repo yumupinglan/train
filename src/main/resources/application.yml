@@ -19,4 +19,4 @@ spring:
         contentType: text/html
     boot:
         admin:
-            url:http://localhost:${server.port}/admin
+            url: http://localhost:${server.port}/admin

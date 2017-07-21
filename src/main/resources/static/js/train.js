@@ -33,11 +33,13 @@
 			return;
 		}
 		var startDate=$("#startDate").val();
+		var seatTypes = $("#expectSeatType").val();
+		var userName = $("#userName").val();
 		setCookie("fromStation",fromStation,60);
 		setCookie("fromStationText",$("#fromStationText").val(),60);
 		setCookie("toStation",toStation,60);
 		setCookie("toStationText",$("#toStationText").val(),60);
-		var data={toStation:toStation,fromStation:fromStation,startDate:startDate};
+		var data={toStation:toStation,fromStation:fromStation,startDate:startDate,seatTypes:seatTypes,userName:userName};
 		dialog.tip.work({type:'loading',  content : '正在努力加载数据，请稍后...', lock : true, timer:0});
 		$.ajax({
 			type : "POST",
@@ -46,7 +48,8 @@
 			data : data,
 			success : function(data) {
 				dialog.tip.remove();
-				$("#train").html(data);
+				getAvailableTrainInfo();
+				$("#train").html(data);				
 			}
 		});
 	});
